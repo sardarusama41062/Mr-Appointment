@@ -46,8 +46,9 @@ class UserForm extends Component {
     header: null
   }
   onPress = async () => {
-    const { fname, lname, age } = this.state
-    if (!fname && !lname && !age) {
+    const { fname, lname, age, gender, city } = this.state
+    const { uploadImage } = this.props
+    if (!fname && !lname && !age && !gender && !city && !uploadImage) {
       this.setState({
         fnameErr: true,
         lnameErr: true,
@@ -55,9 +56,9 @@ class UserForm extends Component {
       })
     }
     else {
-      const value = { fname, lname, age }
+      const value = { fname, lname, age, gender, city }
       const token = await AsyncStorage.getItem('fcmToken')
-      const { phoneNumber, submitForm, indicatorFun, uploadImage } = this.props;
+      const { phoneNumber, submitForm, indicatorFun } = this.props;
       if (uploadImage) {
         this.setState({ photoErr: false })
         indicatorFun()
@@ -79,11 +80,9 @@ class UserForm extends Component {
   render = () => {
     const { create_new_user, navigation, create_new_user_failed, phoneNumber } = this.props;
     if (create_new_user) {
-      console.log('storing...')
       AsyncStorage.setItem('userToken', phoneNumber);
       navigation.navigate('App')
     }
-    const { active } = this.state;
 
     return (
       <View style={{ backgroundColor: '#f7f8f9', height: '100%', flex: 1 }} >
@@ -169,9 +168,9 @@ class UserForm extends Component {
                     expanded={this.state.Cityexpanded}
                     onPress={() => this.setState({ Cityexpanded: true })}
                   >
-                    <ScrollView horizontal
-                      // style={{ height: 200 }}
-                       >
+                    <ScrollView showsVerticalScrollIndicator
+                    // style={{ height: 200 }}
+                    >
                       {City.map((data, key) => {
                         return (
                           <TouchableWithoutFeedback>
@@ -207,11 +206,10 @@ class UserForm extends Component {
         </ScrollView>
       </View>
     );
-  } 
+  }
 }
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
     phoneNumber: state.signUpReducer.phoneNumber,
     create_new_user: state.signUpReducer.create_new_user,

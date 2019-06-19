@@ -122,7 +122,6 @@ class CategoriesScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         userData: state.signUpReducer.userData,
         getUserRatingModel: state.userReducer.getUserRating,

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { Rating } from 'react-native-elements';
-const img = require('../../../assests/img.png')
 
 ///////// redux coding ////////
 import { connect } from 'react-redux';
@@ -38,12 +37,14 @@ class DoctorDetailsScreen extends Component {
         if (this.props.doctorDetails.onlineState) {
             const userToken = await AsyncStorage.getItem('fcmToken')
             const { phoneNumber, fname, lname, imageUrl } = this.props.userData
+            const { token } = this.props.doctorDetails
+
+            const drId = this.props.navigation.getParam('drId', 'drId')
             const DateNTime = new Date
             const data = {
                 userId: phoneNumber,
-                drId: '+923215582381',
-                drToken: 'dJDW7sFt-Zw:APA91bEioxMmY-LPoKXsJWiZJqHpPG_s25g807nmgSFrPSPUcVFHDkwKLAThGv9ziar-J8OZFX2DUrnIQqJk_fHCqFxv2UkbHYRo-tncGptp_0TFUhDuI4kYg-dF8h4xPBLsKfig4Zkz',
-                userToken, imageUrl,
+                drId,
+                drToken: token, userToken, imageUrl,
                 userName: `${fname}  ${lname}`,
                 date: DateNTime.toLocaleDateString(),
                 time: DateNTime.toLocaleTimeString()
@@ -72,7 +73,6 @@ class DoctorDetailsScreen extends Component {
                                         <Text style={{ color: 'white', fontSize: 30 }} >
                                             {this.props.doctorDetails.drName}
                                         </Text>
-                                        {/* <Text style={{ color: 'white', paddingBottom: 40, }} > User ID : '03215582381' </Text> */}
                                     </View>
 
                                 </ImageBackground>
@@ -104,16 +104,16 @@ class DoctorDetailsScreen extends Component {
                                 :
                                 <View
                                     style={[styles.bookContainer, styles.bookedState]} >
-                                    {this.state.bookingStatus == 'booked' ?
+                                    {this.state.bookingStatus === 'booked' ?
                                         <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }} >
                                             Booked
-                                </Text>
+                                        </Text>
                                         :
                                         <View>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text width='80%' style={{ color: 'white', fontSize: 20, fontWeight: 'bold', alignItems: 'flex-end', marginRight: 25 }}>
                                                     Booking
-                                        </Text>
+                                                </Text>
                                                 <View style={{ width: "10%", justifyContent: 'flex-end', alignItems: 'center' }} >
                                                     <ActivityIndicator size='large' color='white' />
                                                 </View>

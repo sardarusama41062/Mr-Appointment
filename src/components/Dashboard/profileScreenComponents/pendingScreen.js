@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
-const img = require('../../../assests/img.png')
+const img = require('../../../assests/no_data_found.png')
 
 ///////// redux coding ////////
 import { connect } from 'react-redux';
@@ -25,7 +25,7 @@ class PendingScreen extends Component {
                                 return (
                                     <View key={index} style={styles.container} >
                                         <View style={styles.imgContainer} >
-                                            <Image source={img} style={{
+                                            <Image source={{ uri: data.drImageUrl }} style={{
                                                 height: 80, width: 80,
                                                 borderWidth: 1, borderRadius: 100,
                                             }} />
@@ -53,7 +53,14 @@ class PendingScreen extends Component {
                             })}
                         </View>
                         :
-                        <Text>Sorry, No Pending Appointments yet</Text>
+                        <View style={{ flex: 1 }} >
+                            <Text>
+                                Sorry! You Have Not Visited Any Doctor Yet.
+                            </Text>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }} >
+                                <Image source={img} width='75%' height='100%' />
+                            </View>
+                        </View>
                     }
                 </View>
             </ScrollView>
@@ -62,7 +69,6 @@ class PendingScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         phoneNumber: state.signUpReducer.userData.phoneNumber,
         pending: state.userReducer.pending

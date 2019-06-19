@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/FontAwesome';
-const img = require('../../../../assests/img.png')
+import { Rating } from 'react-native-elements';
 
 ///////// redux coding ////////
 import { connect } from 'react-redux';
@@ -39,7 +39,6 @@ class DoctorProfilesScreen extends Component {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 // DirectSms.sendDirectSms('0935...', 'This is a direct message');
             } else {
-                console.log('SMS permission denied');
                 this.getSMSPermission()
             }
         }
@@ -65,9 +64,16 @@ class DoctorProfilesScreen extends Component {
                                         <Text style={{ color: 'white', fontSize: 30 }} >
                                             {this.props.doctorData.drName}
                                         </Text>
-                                        <Text style={{ color: 'white', paddingBottom: 40, }} > User ID : '03215582381' </Text>
                                     </View>
                                 </ImageBackground>
+                            </View>
+                            <View style={{ marginBottom: 20 }} >
+                                <Rating
+                                    type='star'
+                                    imageSize={20}
+                                    readonly
+                                    startingValue={this.props.doctorData.finalRating}
+                                />
                             </View>
                             <View style={styles.options} >
                                 <View style={{ flexDirection: 'row' }}>
@@ -162,7 +168,7 @@ class DoctorProfilesScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
+    console.log(state.doctorReducer.doctorData)
     return {
         doctorData: state.doctorReducer.doctorData,
     }

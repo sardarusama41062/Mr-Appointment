@@ -5,7 +5,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icons from 'react-native-vector-icons/FontAwesome'
-const img = require('../../../assests/img.png')
 
 ///////// redux coding ////////
 import { connect } from 'react-redux';
@@ -43,8 +42,8 @@ class ProfileScreen extends Component {
                         <View style={styles.container} >
                             {this.props.userData.acceptedByAdmin && this.props.navigation.navigate('Pro')}
                             <View style={styles.profileContainer}>
-                                {/* <ImageBackground source={{ uri: this.props.userData.imageUrl }} style={{ width: '100%', height: '100%' }} */}
-                                <ImageBackground source={img} style={{ width: '100%', height: '100%' }}
+                                <ImageBackground source={{ uri: this.props.userData.imageUrl }} style={{ width: '100%', height: '100%' }}
+                                    // <ImageBackground source={img} style={{ width: '100%', height: '100%' }}
                                     resizeMode='cover' >
                                     <View style={{ alignItems: 'flex-end', paddingTop: 20 }} >
                                         <TouchableOpacity style={{ width: '8%', }} onPress={() => this.props.navigation.navigate('UpdateProfile')} >
@@ -88,7 +87,7 @@ class ProfileScreen extends Component {
                                     onPress={() => this.handleDoctor()}
                                 >
                                     <View style={{ width: "15%", }} >
-                                        <Icons  name='medkit' size={30} />
+                                        <Icons name='medkit' size={30} />
                                     </View>
                                     <Text width='85%'>
                                         Register As A Doctor
@@ -104,7 +103,6 @@ class ProfileScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         userData: state.signUpReducer.userData,
     }

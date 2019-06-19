@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
 import { ScrollView, SafeAreaView, View } from 'react-native';
-import img from '../../assests/img.png'
 import { DrawerItems } from 'react-navigation';
 import { Card, Title, Paragraph } from 'react-native-paper';
 
@@ -20,10 +19,9 @@ class ProfileCustomComponent extends Component {
                         </Card.Content>
                         {this.props.userData ?
                             <View>
-                                <Card.Cover source={img} resizeMode='contain' />
-                                {/* <Card.Cover source={{ uri: this.props.userData.imageUrl }} resizeMode='contain' /> */}
+                                <Card.Cover source={{ uri: this.props.userData.drImageUrl }} resizeMode='contain' />
                                 <Card.Content style={{ alignItems: 'center', marginBottom: 10 }} >
-                                    <Title style={{ color: 'orange' }} >{this.props.userData.fname} {this.props.userData.lname}</Title>
+                                    <Title style={{ color: 'orange' }} >{this.props.userData.drName}</Title>
                                     <Paragraph> User ID : {this.props.userData.phoneNumber}</Paragraph>
                                 </Card.Content>
                             </View>
@@ -40,9 +38,8 @@ class ProfileCustomComponent extends Component {
 
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
-        userData: state.signUpReducer.userData,
+        userData: state.doctorReducer.doctorData,
     }
 }
 export default connect(mapStateToProps, null)(ProfileCustomComponent);

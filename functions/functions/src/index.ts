@@ -12,7 +12,7 @@ admin.initializeApp(functions.config().firebase);
 
 //////////// user request for appointment /////////////////
 
-export const userPushNotification = functions.database.ref('/doctors/{drId}/requests/{reqId}')
+export const userPushNotification = functions.database.ref('/doctors/doctorList/{drId}/requests/{reqId}')
     .onCreate((snapshot, context) => {
         console.log(snapshot)
         console.log(context)
@@ -72,16 +72,17 @@ export const DoctorAccepted = functions.database.ref(`/admin/doctors/{drId}/info
         if (accepted) {
             return admin.messaging().sendToDevice(token, payload)
                 .then(() => {
-                    return admin.database().ref(`doctors/${id}/info`).set(data)
+                    return admin.database().ref(`/doctors/doctorList/${id}/info`).set(data)
                         .then(() => {
                             return admin.database().ref(`users/${id}/info`).update({ acceptedByAdmin })
                                 .then(() => {
                                     return admin.database().ref(`/admin/doctors/${id}/info`).once('value')
                                         .then(
                                             (res) => {
-                                                const { speciality, drName, clinickLoc } = res.val()
+                                                const { speciality, drName, clinickLoc, drImageUrl } = res.val()
                                                 speciality.forEach((specialist: any) => {
-                                                    return admin.database().ref(`/doctors/specialistOf/${specialist}/${id}`).set({ drName, id, loc: clinickLoc })
+                                                    return admin.database().ref(`/doctors/specialistOf/${specialist}/${id}`)
+                                                        .set({ drName, id, drImageUrl, loc: clinickLoc, })
                                                         .then(() => {
                                                             console.log('success')
                                                         })
@@ -98,7 +99,7 @@ export const DoctorAccepted = functions.database.ref(`/admin/doctors/{drId}/info
 
 //////////// delete appointment from doctor requests using pendin collection /////////////////
 
-export const DeleteRequest = functions.database.ref(`/doctors/{drId}/pending/{pendingId}`)
+export const DeleteRequest = functions.database.ref(`/doctors/doctorList/{drId}/pending/{pendingId}`)
     .onCreate((snapshot, context) => {
         const data = snapshot.val();
         const { userToken, id, drId } = data
@@ -110,7 +111,7 @@ export const DeleteRequest = functions.database.ref(`/doctors/{drId}/pending/{pe
                 badge: '1'
             }
         }
-        return admin.database().ref(`/doctors/${drId}/requests/${id}`).remove()
+        return admin.database().ref(`/doctors/doctorList/${drId}/requests/${id}`).remove()
             .then(res => {
                 return admin.messaging().sendToDevice(userToken, payload)
                 // const textMessage = {
@@ -126,23 +127,25 @@ export const DeleteRequest = functions.database.ref(`/doctors/{drId}/pending/{pe
     })
 
 /////////////// DoctorRating ////////////////////
-export const DoctorRating = functions.database.ref(`/doctors/{drId}/info`)
+export const DoctorRating = functions.database.ref(`/doctors/doctorList/{drId}/info`)
     .onUpdate((snapshot, context) => {
         const newVal = snapshot.after.val()
         const preVal = snapshot.before.val()
         var newRating = newVal.rating
         const preRating = preVal.rating
-        if (newRating !== preRating) {
-            var outOf = preVal.outOf + 1
-            newRating = preRating + newRating
-            const id = context.params.drId
-            const rating = (newRating) / outOf
-            return admin.database().ref(`/doctors/${id}/info`).update({
-                finalRating: rating, rating: newRating, outOf
+        console.log(newRating)
+        console.log(preRating)
+        if (newRating === preRating) {
+            return null
+        }
+        else {
+            var finalRating = (newRating + preRating) / 2
+            const { drId } = context.params
+            return admin.database().ref(`/doctors/doctorList/${drId}/info`).update({
+                finalRating,
             }).then(() => {
                 console.log('rating updated')
             })
         }
-        else return null
     })
 ///////////////////////////////////

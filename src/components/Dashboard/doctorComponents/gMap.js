@@ -1,7 +1,8 @@
 import MapView, { Marker } from 'react-native-maps';
 
 import React, { Component, } from 'react';
-import { StyleSheet, View, Button, Text } from 'react-native'
+import { StyleSheet, View, Button, Text, Alert } from 'react-native'
+import AndroidOpenSettings from 'react-native-android-open-settings'
 
 ////////// redux coding ////////////
 import { connect } from 'react-redux';
@@ -49,7 +50,6 @@ class Map extends Component {
         navigator.geolocation
             .getCurrentPosition(
                 (position) => {
-                    console.log(position);
                     const latitude = position.coords.latitude
                     const longitude = position.coords.longitude
                     const clinickLoc = {
@@ -60,14 +60,26 @@ class Map extends Component {
                         latitude, longitude, latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }
-                    this.setState({ region })
+                    this.setState({ region, err: false })
                 },
                 (error) => {
-                    // See error code charts below.
-                    console.log(error.code, error.message);
+                    this.setState({ err: true })
+                    this.openSettings()
                 },
                 { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
             );
+    }
+    openSettings() {
+        Alert.alert(
+            'Sorry',
+            'You must enable GPS location',
+            [
+                {
+                    text: 'Open Settings',
+                    onPress: () => AndroidOpenSettings.generalSettings()
+                }
+            ]
+        )
     }
     handleSubmit = () => {
         const { clinickLoc } = this.state
@@ -75,9 +87,13 @@ class Map extends Component {
         this.props.navigation.navigate('DoctorForm')
     }
     render() {
-        console.log(this.state)
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
+                {this.state.err &&
+                    <View>
+                        <Button style={{ marginBottom: 10, }} title='Enable Location First' onPress={() => AndroidOpenSettings.generalSettings()} />
+                    </View>
+                }
                 {this.state.region ?
                     <View style={styles.container}>
                         <MapView

@@ -41,7 +41,6 @@ class PhoneAuth extends Component {
     }
   };
   renderPhoneNumberInput() {
-    const { phoneNumber } = this.state;
     return (
       <View style={{ padding: 25, }}>
         <Text style={{}}>Enter phone number:</Text>
@@ -63,9 +62,9 @@ class PhoneAuth extends Component {
                   returnKeyLabel='done'
                   placeholder={'Phone Number ... '}
                   // placeholderTextColor='rgba(255, 255, 255, 0.8)'
-                  value={phoneNumber}
-                  blurOnSubmit = {true}
-                  maxLength = {10}
+                  // value={phoneNumber}
+                  blurOnSubmit={true}
+                  maxLength={10}
                 />
               </View>
               {this.state.error ?
@@ -99,7 +98,46 @@ class PhoneAuth extends Component {
     }
     return (
       < View style={styles.container} >
-        {this.renderPhoneNumberInput()}
+        {/* {this.renderPhoneNumberInput()} */}
+        <View style={{ padding: 25, }}>
+          <Text style={{}}>Enter phone number:</Text>
+          <KeyboardAvoidingView behavior='padding' >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+              <View>
+                <View style={styles.input} >
+                  <View style={{ flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.2)', }}>
+                    <Picker style={{ width: 95 }} >
+                      <Picker.Item label="+92" value="+92" />
+                    </Picker>
+                  </View>
+                  <TextInput
+                    autoFocus
+                    style={styles.inputStyle}
+                    onChangeText={value => this.setState({ phoneNumber: value })}
+                    keyboardType='number-pad'
+                    returnKeyType='next'
+                    returnKeyLabel='done'
+                    placeholder={'Phone Number ... '}
+                    // placeholderTextColor='rgba(255, 255, 255, 0.8)'
+                    // value={phoneNumber}
+                    blurOnSubmit={true}
+                    maxLength={10}
+                  />
+                </View>
+                {this.state.error ?
+                  <Text style={styles.invalid_phoneno} > IInvalid Phone Number </Text>
+                  : null
+                }
+                <Text style={styles.invalid_phoneno} > {this.props.invalid_phoneno} </Text>
+                <View style={{ marginTop: 20 }} >
+                  <Button title="Sign In" style={styles.signInBtn}
+                    // color="#f7c744"
+                    onPress={() => this.signIn()} />
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </View>
         {this.indicator()}
       </View >
     );

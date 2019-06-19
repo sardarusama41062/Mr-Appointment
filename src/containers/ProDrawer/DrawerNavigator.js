@@ -4,8 +4,10 @@ import { createDrawerNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import ProfileCustomComponent from './ProfileCustomComponent'
 
-import { HomeStackNav, HistoryStackNav, 
-  PendingStackNav, RequestStackNav } from '../drStack/stackNavigators'
+import {
+  HomeStackNav, HistoryStackNav,
+  PendingStackNav, RequestStackNav
+} from '../drStack/stackNavigators'
 
 const WIDTH = Dimensions.get('window').width;
 

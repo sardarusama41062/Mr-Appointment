@@ -72,8 +72,8 @@ class UpdateDoctorProfileScreen extends Component {
         const { drName, edu, fee, speciality, sTime, sTimeAM, eTime, eTimeAM, phoneNumber } = this.state;
         if (drName && edu && fee && speciality && sTime && sTimeAM && eTime && eTimeAM) {
             const token = await AsyncStorage.getItem('fcmToken')
-            const {drImageUrl} = this.props.doctorData
-            const data = {drImageUrl, drName, edu, fee, speciality, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token }
+            const { uploadImage } = this.props
+            const data = { uploadImage, drName, edu, fee, speciality, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token }
             // call redux function ..../////
             this.reduxFormHnadler(data)
         }
@@ -149,7 +149,7 @@ class UpdateDoctorProfileScreen extends Component {
                                     selectedItems={speciality}
                                     selectText="Speciality"
                                     searchInputPlaceholderText="Search Diseases..."
-                                    onChangeInput={(text) => console.log(text)}
+                                    onChangeInput={(text) => ''}
                                     styleMainWrapper={{ paddingLeft: 10, color: 'red' }}
                                     tagRemoveIconColor="#CCC"
                                     tagBorderColor="#CCC"
@@ -256,13 +256,12 @@ class UpdateDoctorProfileScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         phoneNumber: state.signUpReducer.phoneNumber,
         doctorData: state.doctorReducer.doctorData,
         error: state.doctorReducer.error,
         updated: state.doctorReducer.updated,
-
+        uploadImage: state.signUpReducer.uploadImage,
     }
 }
 

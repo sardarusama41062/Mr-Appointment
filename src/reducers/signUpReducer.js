@@ -1,15 +1,3 @@
-// const initialState = {
-//     user: null,
-//     message: '',
-//     phoneNumber: '',
-//     confirmResult: null,
-//     indicator: false,
-//     error: false,
-//     userExist: null,
-//     newUser: null,
-//     create_new_user: false,
-//     create_new_user_failed: false
-// };
 
 export default function (state = {}, action) {
     switch (action.type) {
@@ -17,9 +5,7 @@ export default function (state = {}, action) {
             return { ...state, user: action.payload }
         }
         case "SIGN_OUT": {
-            return {
-                ...state, user: null, confirmResult: null,
-            }
+            return { ...state, user: null, confirmResult: null, }
         }
         case "INDICATOR": {
             return { ...state, indicator: true }
@@ -59,11 +45,11 @@ export default function (state = {}, action) {
         case "CREATEING_NEW_USER_FAILD": {
             return { ...state, create_new_user_failed: true }
         }
-        case 'UPLOAD_IMAGE':{
-            return {...state, uploadImage : action.payload }
+        case 'UPLOAD_IMAGE': {
+            return { ...state, uploadImage: action.payload }
         }
-        case 'USER_DATA':{
-            return {...state, userData : action.payload }
+        case 'USER_DATA': {
+            return { ...state, userData: action.payload }
         }
         default: return state;
     }

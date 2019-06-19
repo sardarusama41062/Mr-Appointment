@@ -3,20 +3,21 @@ import firebase from 'react-native-firebase';
 
 export const restoreSession = () => {
     return (dispatch) => {
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                dispatch({
-                    type: 'RESTORE_SESSION',
-                    payload: user
-                })
-            } else {
-                // User has been signed out, reset the state
-                dispatch({
-                    type: 'SIGN_OUT',
-                    payload: null
-                })
-            }
-        });
+        firebase.auth()
+            .onAuthStateChanged((user) => {
+                if (user) {
+                    dispatch({
+                        type: 'RESTORE_SESSION',
+                        payload: user
+                    })
+                } else {
+                    // User has been signed out, reset the state
+                    dispatch({
+                        type: 'SIGN_OUT',
+                        payload: null
+                    })
+                }
+            });
     }
 }
 
@@ -29,20 +30,17 @@ export const cancleConfirmREsult = () => {
 
 export function checkUserExist(phoneNumber) {
     return (dispatch) => {
-        firebase.database().ref('/users/').orderByKey().equalTo(phoneNumber)
-            // .orderByChild('phoneNumber').equalTo(phoneNumber)
-            .once('value').then(res => {
-                console.log(res)
-                console.log('checking...............')
+        firebase.database().ref('/users/')
+            .orderByKey().equalTo(phoneNumber)
+            .once('value')
+            .then(res => {
                 if (res.val()) {
-                    console.log('User Exist...')
                     dispatch({
                         type: 'FIREBSE_USER_EXIST',
                         payload: true,
                     })
                 }
                 else {
-                    console.log('new User ...')
                     dispatch({
                         type: 'FIREBSE_USER_NOT_EXIST'
                     })
@@ -52,11 +50,10 @@ export function checkUserExist(phoneNumber) {
 }
 
 export const signInWithPhone = (phoneNumber) => {
-    console.log('phoneNumber')
     return (dispatch) => {
-        firebase.auth().signInWithPhoneNumber(phoneNumber)
+        firebase.auth()
+            .signInWithPhoneNumber(phoneNumber)
             .then((confirmResult) => {
-                console.log(confirmResult)
                 dispatch({
                     type: 'SIGN_IN_WITH_PHONE',
                     payload: confirmResult,
@@ -118,7 +115,6 @@ export const uploadImage = (imageUrl, phoneNumber) => {
             .ref(`photos/${phoneNumber}`)
             .putFile(imageUrl)
             .then(file => {
-                console.log(file.downloadURL)
                 dispatch({
                     type: 'UPLOAD_IMAGE',
                     payload: file.downloadURL
@@ -133,25 +129,33 @@ export const submitForm = (values, phoneNumber, token, imageUrl) => {
         const { fname, lname, age, gender, city } = values;
         const isDoctor = false
         const acceptedByAdmin = false
-        firebase.database().ref(`/users/${phoneNumber}/info`).set({
-            phoneNumber, fname, lname, age, gender, city, isDoctor, token, acceptedByAdmin, imageUrl
-        }).then(() => {
-            console.log('created new user...')
-            dispatch({
-                type: 'CREATED_NEW_USER',
+        firebase.database()
+            .ref(`/users/${phoneNumber}/info`).set({
+                phoneNumber, fname, lname, age, gender,
+                city, isDoctor, token, acceptedByAdmin, imageUrl
+            }).then(() => {
+                dispatch({
+                    type: 'CREATED_NEW_USER',
+                })
+            }).catch(error => {
+                dispatch({
+                    type: 'CREATEING_NEW_USER_FAILD',
+                })
             })
-        }).catch(error => {
-            console.log(error)
-            dispatch({
-                type: 'CREATEING_NEW_USER_FAILD',
-            })
-        })
     }
 }
 
-
-export const myfirstfun = () =>{
-    return (dispatch)=>{
-        firebase.database().ref()
+export const getUser = (userId) => {
+    return (dispatch) => {
+        firebase.database()
+            .ref(`/users/${userId}/info`)
+            .on('value',
+                function (snap) {
+                    dispatch({
+                        type: 'USER_DATA',
+                        payload: snap.val()
+                    })
+                }
+            )
     }
 }

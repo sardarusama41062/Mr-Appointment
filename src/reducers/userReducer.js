@@ -16,7 +16,7 @@ export default function (state = {}, action) {
             return { ...state, summary: action.payload }
         case 'UPDATED_USER_SUCCESS':
             return { ...state, updatedUser: true }
-        case 'CUPDATED_USER_FAILD':
+        case 'UPDATED_USER_FAILD':
             return { ...state, updatedUserFailed: true }
         case 'RESET_UPDATED_USER':
             return { ...state, updatedUser: false }

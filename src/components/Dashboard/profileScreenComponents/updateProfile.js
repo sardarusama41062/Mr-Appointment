@@ -189,13 +189,13 @@ class UpdateProfile extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         phoneNumber: state.signUpReducer.phoneNumber,
         updatedUser: state.userReducer.updatedUser,
         updatedUserFailed: state.userReducer.updatedUserFailed,
         indicator: state.signUpReducer.indicator,
-        userData: state.signUpReducer.userData
+        userData: state.signUpReducer.userData,
+        uploadImage: state.signUpReducer.uploadImage
     }
 }
 const mapDispatchToProps = (dispatch) => {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
-const img = require('../../../../assests/img.png')
+const img = require('../../../../assests/no_data_found.png')
 
 ///////// redux coding ////////
 import { connect } from 'react-redux';
@@ -15,7 +15,6 @@ class DoctorHistoryScreen extends Component {
         getSummary(phoneNumber)
     }
     render() {
-        console.log(this.state)
         return (
             <ScrollView>
                 <View style={{ padding: 10, paddingBottom: 100 }} >
@@ -25,9 +24,10 @@ class DoctorHistoryScreen extends Component {
                                 return (
                                     <View key={index} style={styles.container} >
                                         <View style={styles.imgContainer} >
-                                            <Image source={{ uri: data.imageUrl,
-                                             cache: 'reload',  method:'GET'
-                                             }}
+                                            <Image source={{
+                                                uri: data.imageUrl,
+                                                cache: 'reload', method: 'GET'
+                                            }}
                                                 key={data.imageUrl}
                                                 style={{
                                                     height: 80, width: 80,
@@ -47,7 +47,14 @@ class DoctorHistoryScreen extends Component {
                             })}
                         </View>
                         :
-                        <Text> Sorry, No Patient Have Visited Yout Yet </Text>
+                        <View style={{ flex: 1 }} >
+                            <Text>
+                                Sorry! No Patient Have Visited You Yet.
+                            </Text>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }} >
+                                <Image source={img} width='75%' height='100%' />
+                            </View>
+                        </View>
                     }
                 </View>
             </ScrollView>
@@ -56,7 +63,6 @@ class DoctorHistoryScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         phoneNumber: state.doctorReducer.doctorData.phoneNumber,
         summary: state.doctorReducer.summary

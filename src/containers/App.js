@@ -28,7 +28,7 @@ export default class App extends Component {
     }
   }
   componentDidMount() {
-    const ref = firebase.database().ref(`doctors/+923215582381/info`);
+    const ref = firebase.database().ref(`/doctors/doctorList/+923215582381/info`);
     ref.update({
       onlineState: true,
       status: "I'm online."
@@ -44,7 +44,6 @@ export default class App extends Component {
     })
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     firebase.notifications().onNotification((notification) => {
-      console.log(notification)
       const notifi = new firebase.notifications.Notification({
         show_in_foreground: true,
         sound: 'default',
@@ -57,7 +56,6 @@ export default class App extends Component {
         .android.setVibrate(1000);
 
       firebase.notifications().displayNotification(notifi)
-      console.log('success')
     });
   }
   openSettings() {
@@ -65,10 +63,6 @@ export default class App extends Component {
       'Sorry',
       'There is no Internet Connection',
       [
-        {
-          text: 'cancel',
-          onPress: () => console.log('canceled')
-        },
         {
           text: 'Open Settings',
           onPress: () => AndroidOpenSettings.generalSettings()
@@ -97,7 +91,6 @@ export default class App extends Component {
       if (fcmToken) {
         // user has a device token
         await AsyncStorage.setItem('fcmToken', fcmToken);
-        console.log(fcmToken)
       }
     }
     console.log(fcmToken)
@@ -110,13 +103,12 @@ export default class App extends Component {
       this.getToken();
     } catch (error) {
       // User has rejected permissions
-      console.log('permission rejected');
       this.requestPermission()
     }
   }
   handleConnectivityChange = isConnected => {
     // alert(isConnected)
-    const ref = firebase.database().ref(`doctors/+923215582381/info`);
+    const ref = firebase.database().ref(`/doctors/doctorList/+923215582381/info`);
     if (isConnected) {
       this.setState({ isConnected });
       ref.update({ onlineState: true })

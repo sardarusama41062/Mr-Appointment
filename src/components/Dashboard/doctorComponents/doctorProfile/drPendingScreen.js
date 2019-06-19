@@ -4,9 +4,12 @@ import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Button, Al
 ///////// redux coding ////////
 import { connect } from 'react-redux';
 import { bindActionCreators } from "redux";
-import { getPendingAppointments, removePendingAppointments } from '../../../../actions/doctorActions'
+import { getPendingAppointments, removePendingAppointments, removePatientNotReceived } from '../../../../actions/doctorActions'
 
 ///////////////////////////////
+
+const img = require('../../../../assests/no_data_found.png')
+
 class DoctorPendingScreen extends Component {
     constructor() {
         super()
@@ -41,6 +44,27 @@ class DoctorPendingScreen extends Component {
             ],
         );
     }
+    handleNotReceived = (data) => {
+        const { removePatientNotReceived } = this.props
+        const { userName, token } = data
+        Alert.alert(
+            'Confirmation',
+            `${userName} with Token # ${token} is not Received ?`,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => '',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Yes',
+                    onPress: () => {
+                        removePatientNotReceived(data)
+                    },
+                }
+            ],
+        );
+    }
     render() {
         return (
             <ScrollView>
@@ -49,7 +73,7 @@ class DoctorPendingScreen extends Component {
                         <View>
                             {this.props.pending.map((data, index) => {
                                 return (
-                                    <View>
+                                    <View key={index} >
                                         <TouchableOpacity key={index} style={styles.container} >
                                             <View style={styles.imgContainer} >
                                                 <Image source={{ uri: data.imageUrl }} style={{
@@ -76,15 +100,27 @@ class DoctorPendingScreen extends Component {
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={{ width: '100%' }} >
-                                            <Button onPress={() => this.handleSubmit(data)} title='Patient Received?' />
+                                        <View style={{ flexDirection: 'row' }} >
+                                            <View style={{ width: '48%', marginRight: '2%' }} >
+                                                <Button onPress={() => this.handleSubmit(data)} title='Patient Received' />
+                                            </View>
+                                            <View style={{ width: '50%', backgroundColor: 'red', }} >
+                                                <Button color="#ef000b" onPress={() => this.handleNotReceived(data)} title='Not Received' />
+                                            </View>
                                         </View>
                                     </View>
                                 )
                             })}
                         </View>
                         :
-                        <Text>Sorry, No Pending Appoinemnts</Text>
+                        <View style={{ flex: 1 }} >
+                            <Text>
+                                Sorry! No Pending Appointment Yet.
+                            </Text>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%'  }} >
+                                <Image source={img} width='75%' height='100%' />
+                            </View>
+                        </View>
                     }
                 </View>
             </ScrollView>
@@ -93,7 +129,6 @@ class DoctorPendingScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         phoneNumber: state.doctorReducer.doctorData.phoneNumber,
         pending: state.doctorReducer.pending
@@ -102,7 +137,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        getPendingAppointments, removePendingAppointments
+        getPendingAppointments, removePendingAppointments, removePatientNotReceived
     }, dispatch)
 }
 

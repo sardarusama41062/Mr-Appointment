@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import {
-    conformCode, signOutUser, cancleConfirmREsult,
+    conformCode, cancleConfirmREsult,
     invalid_codeFun, indicatorFun, disableIndicatorFun,
     signInWithPhone
 } from '../../actions';
@@ -26,10 +26,7 @@ class VerifCodeInput extends Component {
             this.setState({
                 resend: true
             })
-        }, 3000);
-    }
-    signOut = () => {
-        this.props.signOutUser()
+        }, 10000);
     }
     confirmCode = () => {
         const { codeInput } = this.state;
@@ -39,7 +36,6 @@ class VerifCodeInput extends Component {
             if (codeInput.length == 6) {
                 this.setState({ error: false })
                 this.props.indicatorFun()
-                console.log('signing in...')
                 this.props.conformCode(confirmResult, codeInput)
                 // this.props.conformCode(confirmResult, codeInput, phoneNumber, userExist)
             } else {
@@ -50,7 +46,6 @@ class VerifCodeInput extends Component {
     _signInAsync = () => {
         const { userExist, phoneNumber } = this.props
         if (userExist) {
-            console.log('storing...')
             AsyncStorage.setItem('userToken', phoneNumber);
         }
         this.props.navigation.navigate(!userExist ? 'Forms' : 'App');
@@ -74,7 +69,6 @@ class VerifCodeInput extends Component {
 
     render() {
         const { codeInput } = this.state;
-        console.log(this.props.phoneNumber)
         return (
             <ScrollView style={styles.container} >
                 <View  >
@@ -141,7 +135,7 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        conformCode, signOutUser,
+        conformCode,
         cancleConfirmREsult, invalid_codeFun,
         indicatorFun, disableIndicatorFun,
         signInWithPhone

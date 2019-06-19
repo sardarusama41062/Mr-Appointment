@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import {
-    Platform,
-    StyleSheet,
-    Text,
-    View,
-    TouchableOpacity,
-    Image,
+    Platform, StyleSheet, View, TouchableOpacity, Image,
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -29,7 +24,6 @@ class UploadImage extends Component {
         };
 
         ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
 
             if (response.didCancel) {
                 console.log('User cancelled photo picker');

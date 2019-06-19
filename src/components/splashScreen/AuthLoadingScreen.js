@@ -7,18 +7,15 @@ import { bindActionCreators } from 'redux';
 import { restoreSession } from '../../actions'
 
 class AuthLoadingScreen extends Component {
-
     constructor(props) {
         super(props);
         this._bootstrapAsync();
     }
-
     // Fetch the token from storage then navigate to our appropriate place
     _bootstrapAsync = async () => {
         const userToken = await AsyncStorage.getItem('userToken');
         // const Doctor = await AsyncStorage.getItem('Doctor');
         const { restoreSession, navigation, } = this.props
-
         restoreSession()
         // if (Doctor) {
         //     navigation.navigate('HomeScreen')

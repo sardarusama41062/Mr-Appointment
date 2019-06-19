@@ -1,6 +1,7 @@
 import firebase from 'react-native-firebase';
-import AsyncStorage from '@react-native-community/async-storage';
 const DB = firebase.database()
+
+
 export const submitMapLoc = (clinickLoc) => {
     return (dispatch) => {
         dispatch({
@@ -13,7 +14,6 @@ export const removeLoc = () => {
     return (dispatch) => {
         dispatch({
             type: 'RMV_MAP_LOC',
-            
         })
     }
 }
@@ -37,8 +37,6 @@ export const becomeDoctor = (data) => {
             }).then(async () => {
                 DB.ref(`/users/${phoneNumber}/info`)
                     .update({ isDoctor: true })
-                console.log('created new Doctor...')
-                await AsyncStorage.setItem('isDoctor', 'true')
                 dispatch({
                     type: 'CREATED_NEW_DOCTOR',
                     payload: data,
@@ -64,9 +62,8 @@ export const removeErr = () => {
 export const getDoctor = (phoneNumber) => {
     console.log(phoneNumber)
     return (dispatch) => {
-        DB.ref(`/doctors/${phoneNumber}/info`)
+        DB.ref(`/doctors/doctorList/${phoneNumber}/info`)
             .on('value', function (snapshot) {
-                console.log(snapshot)
                 dispatch({
                     type: 'GET_DOCTOR_DATA',
                     payload: snapshot.val()
@@ -80,16 +77,14 @@ export const getDoctor = (phoneNumber) => {
 export const getRequests = (phoneNumber) => {
     console.log(phoneNumber)
     return (dispatch) => {
-        DB.ref(`doctors/${phoneNumber}/requests`).on('value', function (snapshot) {
+        DB.ref(`/doctors/doctorList/${phoneNumber}/requests`).on('value', function (snapshot) {
             var data = snapshot.val();
-            console.log(data)
             var keys = []
             for (let key in data) {
                 keys.push({
                     ...data[key], id: key
                 })
             }
-            console.log(keys)
             dispatch({
                 type: 'GET_REQUESTS',
                 payload: keys
@@ -101,7 +96,7 @@ export const getRequests = (phoneNumber) => {
 export const postAppointment = (data, token, selectedTime, drName, drImageUrl) => {
     return () => {
         const { userName, date, drId, id, userId, userToken, imageUrl } = data
-        DB.ref(`/doctors/${drId}/pending`).push({
+        DB.ref(`/doctors/doctorList/${drId}/pending`).push({
             userName, date, id, token, selectedTime, userToken, drId, drName, userId, imageUrl, drImageUrl
         }).then((res) => {
             DB.ref(`/users/${userId}/pending/${drId}`).set({
@@ -116,30 +111,29 @@ export const postAppointment = (data, token, selectedTime, drName, drImageUrl) =
 }
 export const getPendingAppointments = (phoneNumber) => {
     return (dispatch) => {
-        DB.ref(`doctors/${phoneNumber}/pending`).on('value', function (snapshot) {
-            // console.log(snapshot.val())
-            var data = snapshot.val();
-            var keys = []
-            for (let key in data) {
-                keys.push({
-                    ...data[key], id: key
+        DB.ref(`/doctors/doctorList/${phoneNumber}/pending`).on('value',
+            function (snapshot) {
+                var data = snapshot.val();
+                var keys = []
+                for (let key in data) {
+                    keys.push({
+                        ...data[key], id: key
+                    })
+                }
+                dispatch({
+                    type: 'GET_PENDING',
+                    payload: keys
                 })
-            }
-            console.log(keys)
-            dispatch({
-                type: 'GET_PENDING',
-                payload: keys
             })
-        })
     }
 }
 export const removePendingAppointments = (data) => {
     return () => {
         const { userName, date, userToken, drId, id, userId, drName, imageUrl, drImageUrl } = data
-        DB.ref(`/doctors/${drId}/summary`).push({
+        DB.ref(`/doctors/doctorList/${drId}/summary`).push({
             userName, date, userToken, imageUrl
         }).then((res) => {
-            DB.ref(`/doctors/${drId}/pending/${id}`).remove()
+            DB.ref(`/doctors/doctorList/${drId}/pending/${id}`).remove()
             DB.ref(`/users/${userId}/pending/${drId}`).remove()
             DB.ref(`/users/${userId}/summary/`).push({
                 drName, date, drId, drImageUrl
@@ -153,10 +147,22 @@ export const removePendingAppointments = (data) => {
         }).catch(error => console.log(error))
     }
 }
+
+export const removePatientNotReceived = (data) => {
+    return (dispatch) => {
+        const { drId, id, userId } = data
+        DB.ref(`/doctors/doctorList/${drId}/pending/${id}`).remove()
+            .then(() => {
+                DB.ref(`users/${userId}/requestsSend/${drId}`).update({
+                    status: 'book'
+                })
+            })
+    }
+}
+
 export const getSummary = (phoneNumber) => {
     return (dispatch) => {
-        DB.ref(`doctors/${phoneNumber}/summary`).on('value', function (snapshot) {
-            // console.log(snapshot.val())
+        DB.ref(`/doctors/doctorList/${phoneNumber}/summary`).on('value', function (snapshot) {
             var data = snapshot.val();
             var keys = []
             for (let key in data) {
@@ -164,7 +170,6 @@ export const getSummary = (phoneNumber) => {
                     ...data[key], id: key
                 })
             }
-            console.log(keys)
             dispatch({
                 type: 'GET_SUMMARY',
                 payload: keys
@@ -175,9 +180,9 @@ export const getSummary = (phoneNumber) => {
 
 export const updateDrProfile = (data) => {
     return (dispatch) => {
-        const { drName, edu, fee, clinick, speciality, address, gender, city, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token, drImageUrl } = data
-        DB.ref(`/doctors/${phoneNumber}/info`).update({
-            drName, edu, fee, clinick, speciality, address, gender, city, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token, drImageUrl
+        const { drName, edu, fee, clinick, speciality, address, gender, city, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token, uploadImage } = data
+        DB.ref(`/doctors/doctorList/${phoneNumber}/info`).update({
+            drName, edu, fee, clinick, speciality, address, gender, city, sTime, sTimeAM, eTime, eTimeAM, phoneNumber, token, drImageUrl: uploadImage
         }).then(async () => {
             dispatch({
                 type: 'UPDATED_PROFILE',

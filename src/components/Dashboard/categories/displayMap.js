@@ -1,7 +1,8 @@
 import MapView, { Marker } from 'react-native-maps';
 
 import React, { Component, } from 'react';
-import { StyleSheet, View, Button, Text } from 'react-native'
+import { StyleSheet, View, Button, Text, PermissionsAndroid, Alert } from 'react-native'
+import AndroidOpenSettings from 'react-native-android-open-settings'
 
 ////////// redux coding ////////////
 import { connect } from 'react-redux';
@@ -26,13 +27,42 @@ class Map extends Component {
         clinickLoc: {
             latitude: 0,
             longitude: 0
-        }
+        },
+        err: false
     }
     componentDidMount() {
+        this.request_location_runtime_permission()
         const { navigation, getDoctorByCategory } = this.props;
         const category = navigation.getParam('diseaseName', 'diseaseName');
         getDoctorByCategory(category)
         this.getlocation()
+    }
+    request_location_runtime_permission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                    title: 'Mr. Appointment',
+                    message:
+                        'Mr. Appointment App needs access to your location to display doctor location on map ',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('location granted')
+                // Alert.alert("Location Permission Granted.");
+            }
+            else {
+
+                this.request_location_runtime_permission()
+
+            }
+        } catch (err) {
+            console.warn(err)
+        }
     }
     getlocation = () => {
         navigator.geolocation
@@ -48,19 +78,36 @@ class Map extends Component {
                         latitude, longitude, latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }
-                    this.setState({ region })
+                    this.setState({ region, err: false })
                 },
                 (error) => {
                     // See error code charts below.
-                    console.log(error.code, error.message);
+                    this.setState({ err: true })
+                    this.openSettings()
                 },
                 { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 }
             );
     }
+    openSettings() {
+        Alert.alert(
+            'Sorry',
+            'You must enable GPS location',
+            [
+                {
+                    text: 'Open Settings',
+                    onPress: () => AndroidOpenSettings.generalSettings()
+                }
+            ]
+        )
+    }
     render() {
-        const latlon = { longitude: 73.06965362280609, latitude: 31.38814748645727 }
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
+                {this.state.err &&
+                    <View>
+                        <Button style = {{marginBottom: 10,}}  title='Enable Location First' onPress={() => AndroidOpenSettings.generalSettings()} />
+                    </View>
+                }
                 {this.state.region ?
                     <View style={styles.container}>
                         <MapView

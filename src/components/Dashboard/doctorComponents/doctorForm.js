@@ -206,7 +206,7 @@ class DrFormScreen extends Component {
                                     selectedItems={speciality}
                                     selectText="Specialist of ..."
                                     searchInputPlaceholderText="Search Diseases..."
-                                    onChangeInput={(text) => console.log(text)}
+                                    onChangeInput={(text) => ''}
                                     styleMainWrapper={{ paddingLeft: 10, color: 'red' }}
                                     tagRemoveIconColor="#CCC"
                                     tagBorderColor="#CCC"
@@ -364,7 +364,6 @@ class DrFormScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state.signUpReducer)
     return {
         phoneNumber: state.signUpReducer.userData.phoneNumber,
         isDoctor: state.signUpReducer.userData.isDoctor,

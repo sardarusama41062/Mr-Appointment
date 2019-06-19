@@ -13,6 +13,9 @@ import { bindActionCreators } from "redux";
 import { getRequests, postAppointment } from '../../../../../actions/doctorActions'
 ///////////////////////////////
 
+const img = require('../../../../../assests/no_data_found.png')
+
+
 class AppointmentRequestsScreen extends Component {
 
     constructor() {
@@ -74,13 +77,21 @@ class AppointmentRequestsScreen extends Component {
     }
     render() {
         return (
-            <View style={{ padding: 10, }} >
+            <View style={{ padding: 10, flex: 1 }} >
                 <ScrollView>
                     {this.props.requests ?
                         <View>
+                            <View style={{ backgroundColor: 'rgb(23, 159, 73)', padding: 5, alignItems: 'center' }} >
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }} >
+                                    Assign Appointments to Patients.
+                                </Text>
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }} >
+                                    Choose Token # and Time wisely
+                                </Text>
+                            </View>
                             {this.props.requests.map((data, index) => {
                                 return (
-                                    <View>
+                                    <View key={index} >
                                         <TouchableOpacity key={index} style={styles.container}
                                             onPress={() => this.openModel(data)}
                                         >
@@ -110,15 +121,20 @@ class AppointmentRequestsScreen extends Component {
                             })}
                         </View>
                         :
-                        <Text>
-                            Sorry, No Request Yet...
-                        </Text>
+                        <View style={{ flex: 1 }} >
+                            <Text>
+                                Sorry! No Request Yet.
+                            </Text>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%' }} >
+                                <Image source={img} width='75%' height='100%' />
+                            </View>
+                        </View>
                     }
 
                 </ScrollView>
                 <Modal
                     ref={"modal"}
-                    style={{ height: 400, }}
+                    style={{ height: 400 }}
                     position='top'
                     isOpen={this.state.isModelOpen}
                     backdropPressToClose={false}
@@ -144,7 +160,7 @@ class AppointmentRequestsScreen extends Component {
                             />
                             {
                                 this.state.token && this.state.selectedTime ?
-                                    <View style={{ width: '100%' }} >
+                                    <View style={{ width: '100%', marginBottom: 20 }} >
                                         <Button title='Submit' onPress={() => this.handleSubmit()} />
                                     </View>
                                     : null
